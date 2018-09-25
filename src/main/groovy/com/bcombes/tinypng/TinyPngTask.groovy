@@ -155,49 +155,49 @@ public class TinyPngTask extends DefaultTask {
             }
         }
 
-        if (fileName.endsWith(".jpg") || fileName.endsWith(".png")) {
+        //if (fileName.endsWith(".jpg") || fileName.endsWith(".png")) {
 
-            println("find target pic >>>>>>>>>>>>> $filePath")
+        println("find target pic >>>>>>>>>>>>> $filePath")
 
-            def fis = new FileInputStream(imgFile)
+        def fis = new FileInputStream(imgFile)
 
-            try {
-                def beforeSize = fis.available()
-                def beforeSizeStr = formetFileSize(beforeSize)
+        try {
+            def beforeSize = fis.available()
+            def beforeSizeStr = formetFileSize(beforeSize)
 
-                // Use the Tinify API client
-                def tSource = Tinify.fromFile("${filePath}/${fileName}")
-                tSource.toFile("${filePath}/${fileName}")
+            // Use the Tinify API client
+            def tSource = Tinify.fromFile("${filePath}/${fileName}")
+            tSource.toFile("${filePath}/${fileName}")
 
-                def afterSize = fis.available()
-                def afterSizeStr = formetFileSize(afterSize)
+            def afterSize = fis.available()
+            def afterSizeStr = formetFileSize(afterSize)
 
-                beforeTotalSize += beforeSize
-                afterTotalSize += afterSize
-                tinyPngInfo = new TinyPngInfo(filePath, beforeSizeStr, afterSizeStr, generateMD5(imgFile))
+            beforeTotalSize += beforeSize
+            afterTotalSize += afterSize
+            tinyPngInfo = new TinyPngInfo(filePath, beforeSizeStr, afterSizeStr, generateMD5(imgFile))
 
-                println("beforeSize: $beforeSizeStr -> afterSize: ${afterSizeStr}")
-            } catch (AccountException e) {
-                println("AccountException: ${e.getMessage()}")
-                accountError = true
-                return
-                // Verify your API key and account limit.
-            } catch (ClientException e) {
-                // Check your source image and request options.
-                println("ClientException: ${e.getMessage()}")
-            } catch (ServerException e) {
-                // Temporary issue with the Tinify API.
-                println("ServerException: ${e.getMessage()}")
-            } catch (ConnectionException e) {
-                // A network connection error occurred.
-                println("ConnectionException: ${e.getMessage()}")
-            } catch (IOException e) {
-                // Something else went wrong, unrelated to the Tinify API.
-                println("IOException: ${e.getMessage()}")
-            } catch (Exception e) {
-                println("Exception: ${e.toString()}")
-            }
+            println("beforeSize: $beforeSizeStr -> afterSize: ${afterSizeStr}")
+        } catch (AccountException e) {
+            println("AccountException: ${e.getMessage()}")
+            accountError = true
+            return
+            // Verify your API key and account limit.
+        } catch (ClientException e) {
+            // Check your source image and request options.
+            println("ClientException: ${e.getMessage()}")
+        } catch (ServerException e) {
+            // Temporary issue with the Tinify API.
+            println("ServerException: ${e.getMessage()}")
+        } catch (ConnectionException e) {
+            // A network connection error occurred.
+            println("ConnectionException: ${e.getMessage()}")
+        } catch (IOException e) {
+            // Something else went wrong, unrelated to the Tinify API.
+            println("IOException: ${e.getMessage()}")
+        } catch (Exception e) {
+            println("Exception: ${e.toString()}")
         }
+        //}
         //}
         return tinyPngInfo
     }
@@ -261,9 +261,9 @@ public class TinyPngTask extends DefaultTask {
                         def imgFile = file
                         if(!error) {
                             TinyPngInfo result = compress(imgFile, configuration.whiteList, compressedList)
-                            beforeSize += result.beforeSize
-                            afterSize += result.afterSize
-                            error = result.error
+                            beforeSize += result.preSize
+                            afterSize += result.postSize
+                            //error = result.error
                             if (result != null) {
                                 newCompressedList.add(result)
                             }

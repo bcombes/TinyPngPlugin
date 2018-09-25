@@ -1,4 +1,4 @@
-package com.waynell.tinypng
+package com.bcombes.tinypng
 
 /**
  * Create On 16/12/2016
@@ -7,13 +7,11 @@ package com.waynell.tinypng
 public class TinyPngExtension {
     String apiKey
     ArrayList<String> whiteList;
-    ArrayList<String> resourceDir;
     ArrayList<String> resourcePattern;
 
     public TinyPngExtension() {
         apiKey = ""
         whiteList = []
-        resourceDir = []
         resourcePattern = []
     }
 
@@ -22,7 +20,6 @@ public class TinyPngExtension {
         return "TinyPngExtension{" +
                 "apiKey='" + apiKey + '\'' +
                 ", whiteList=" + whiteList +
-                ", resourceDir=" + resourceDir +
                 ", resourcePattern=" + resourcePattern +
                 '}';
     }

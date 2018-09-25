@@ -1,3 +1,4 @@
+
 buildscript {
     repositories {
         mavenCentral()
@@ -10,9 +11,40 @@ buildscript {
     }
 }
 
+plugins {
+    id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.10.0'
+}
+
+version = "1.2.2"
+group = "com.bcombes.tinypng"
+
 allprojects {
     repositories {
         mavenCentral()
+    }
+}
+
+gradlePlugin {
+    plugins {
+        tinyPngPlugin {
+            id = 'com.bcombes.tinypng'
+            implementationClass = 'com.bcombes.tinypng.TinyPngPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/bcombes/TinyPngPlugin'
+    vcsUrl = 'https://github.com/bcombes/TinyPngPlugin.git'
+    description = 'Gradle plugin for automatically optimizing project png and jpg images!'
+    tags = ['tinypng', 'image', 'optimize', 'png', 'jpg']
+
+    plugins {
+        tinyPngPlugin {
+            // id is captured from java-gradle-plugin configuration
+            displayName = 'Tiny PNG plugin'
+        }
     }
 }
 

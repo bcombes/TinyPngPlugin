@@ -8,7 +8,7 @@
  *
  */
 
-package com.waynell.tinypng
+package com.bcombes.tinypng
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project

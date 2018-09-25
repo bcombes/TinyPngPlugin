@@ -1,4 +1,4 @@
-package com.waynell.tinypng
+package com.bcombes.tinypng
 
 /**
  * Create On 16/12/2016

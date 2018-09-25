@@ -257,7 +257,8 @@ public class TinyPngTask extends DefaultTask {
             }
             rootDir.eachFileRecurse (FileType.FILES) { file ->
                 configuration.resourcePattern.each { p ->
-                    file.eachFileMatch(~/$p/) { imgFile ->
+                    if(file.getName().matches(~/$p/)) {
+                        def imgFile = file
                         if(!error) {
                             TinyPngInfo result = compress(imgFile, configuration.whiteList, compressedList)
                             beforeSize += result.beforeSize

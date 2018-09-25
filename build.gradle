@@ -16,7 +16,7 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.10.0'
 }
 
-version = "1.2.4"
+version = "1.2.5"
 group = "com.bcombes.tinypng"
 
 allprojects {

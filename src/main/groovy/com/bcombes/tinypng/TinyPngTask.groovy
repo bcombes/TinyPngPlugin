@@ -252,7 +252,7 @@ public class TinyPngTask extends DefaultTask {
         def rootDir = new File("${project.rootDir}")
         if(rootDir.exists() && rootDir.isDirectory()) {
             if (!(configuration.resourcePattern ?: false)) {
-                configuration.resourcePattern = ["*.png", "*.jpg", "*.jpeg"]
+                configuration.resourcePattern = [".+\\.png", ".+\\.jpg", ".+\\.jpeg"]
             }
             rootDir.eachFileRecurse (FileType.FILES) { file ->
                 configuration.resourcePattern.each { p ->

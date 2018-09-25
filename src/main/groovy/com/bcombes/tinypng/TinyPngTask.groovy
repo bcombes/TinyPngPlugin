@@ -259,15 +259,17 @@ public class TinyPngTask extends DefaultTask {
                 configuration.resourcePattern.each { p ->
                     if(file.getName().matches(~/$p/)) {
                         def imgFile = file
-                        if(!error) {
-                            TinyPngInfo result = compress(imgFile, configuration.whiteList, compressedList)
+                        //if(!error) {
+                        TinyPngInfo result = compress(imgFile, configuration.whiteList, compressedList)
+                        if (result != null) {
                             beforeSize += result.preSize
                             afterSize += result.postSize
-                            //error = result.error
-                            if (result != null) {
-                                newCompressedList.add(result)
-                            }
+                        //error = result.error
+                            newCompressedList.add(result)
+                        } else {
+                            print("${imgFile} returning null")
                         }
+                        //}
                     }
                 }
             }

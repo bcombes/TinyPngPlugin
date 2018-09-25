@@ -249,7 +249,8 @@ public class TinyPngTask extends DefaultTask {
         def error = false
         def newCompressedList = new ArrayList<TinyPngInfo>()
         //configuration.resourceDir.each { d ->
-        def rootDir = new File("${project.rootDir}")
+        def rootDir = new File("${project.projectDir}")
+        println("project root set to ... ${rootDir}")
         if(rootDir.exists() && rootDir.isDirectory()) {
             if (!(configuration.resourcePattern ?: false)) {
                 configuration.resourcePattern = [".+\\.png", ".+\\.jpg", ".+\\.jpeg"]

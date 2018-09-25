@@ -28,7 +28,7 @@ public class TinyPngTask extends DefaultTask {
         configuration = project.tinyInfo
     }
 
-    public static String formetFileSize(long fileS) {
+    public static String formatFileSize(long fileS) {
         def df = new DecimalFormat("#.00")
         if (fileS == 0L) {
             return "0B"
@@ -92,14 +92,14 @@ public class TinyPngTask extends DefaultTask {
 //
 //                try {
 //                    def beforeSize = fis.available()
-//                    def beforeSizeStr = formetFileSize(beforeSize)
+//                    def beforeSizeStr = formatFileSize(beforeSize)
 //
 //                    // Use the Tinify API client
 //                    def tSource = Tinify.fromFile("${resDir}/${fileName}")
 //                    tSource.toFile("${resDir}/${fileName}")
 //
 //                    def afterSize = fis.available()
-//                    def afterSizeStr = formetFileSize(afterSize)
+//                    def afterSizeStr = formatFileSize(afterSize)
 //
 //                    beforeTotalSize += beforeSize
 //                    afterTotalSize += afterSize
@@ -157,20 +157,20 @@ public class TinyPngTask extends DefaultTask {
 
         //if (fileName.endsWith(".jpg") || fileName.endsWith(".png")) {
 
-        println("find target pic >>>>>>>>>>>>> $filePath")
+        println("find target pic >>>>>>>>>>>>> $filePath\n")
 
         def fis = new FileInputStream(imgFile)
 
         try {
             def beforeSize = fis.available()
-            def beforeSizeStr = formetFileSize(beforeSize)
+            def beforeSizeStr = formatFileSize(beforeSize)
 
             // Use the Tinify API client
-            def tSource = Tinify.fromFile("${filePath}/${fileName}")
-            tSource.toFile("${filePath}/${fileName}")
+            def tSource = Tinify.fromFile("${filePath}")
+            tSource.toFile("${filePath}")
 
             def afterSize = fis.available()
-            def afterSizeStr = formetFileSize(afterSize)
+            def afterSizeStr = formatFileSize(afterSize)
 
             beforeTotalSize += beforeSize
             afterTotalSize += afterSize
@@ -267,7 +267,7 @@ public class TinyPngTask extends DefaultTask {
                         //error = result.error
                             newCompressedList.add(result)
                         } else {
-                            print("${imgFile} returning null")
+                            print("${imgFile} returning null\n")
                         }
                         //}
                     }
@@ -288,7 +288,7 @@ public class TinyPngTask extends DefaultTask {
             def jsonOutput = new JsonOutput()
             def json = jsonOutput.toJson(compressedList)
             compressedListFile.write(jsonOutput.prettyPrint(json), "utf-8")
-            println("Task finish, compress ${newCompressedList.size()} files, before total size: ${formetFileSize(beforeSize)} after total size: ${formetFileSize(afterSize)}")
+            println("Task finish, compress ${newCompressedList.size()} files, before total size: ${formatFileSize(beforeSize)} after total size: ${formatFileSize(afterSize)}")
         }
     }
 }

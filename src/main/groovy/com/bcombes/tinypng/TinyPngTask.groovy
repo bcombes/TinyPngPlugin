@@ -19,6 +19,7 @@ public class TinyPngTask extends DefaultTask {
 
     //def android
     def TinyPngExtension configuration
+    def static File projectRootDirectory = new File(${project.projectDir})
 
     TinyPngTask() {
         description = 'Tiny Resources'
@@ -26,6 +27,7 @@ public class TinyPngTask extends DefaultTask {
         outputs.upToDateWhen { false }
         //android = project.extensions.android
         configuration = project.tinyInfo
+        //projectRootDirectory = ;
     }
 
     public static String formatFileSize(long fileS) {
@@ -59,77 +61,6 @@ public class TinyPngTask extends DefaultTask {
         return bigInt.toString(16).padLeft(32, '0')
     }
 
-//    public static TinyPngResult compress(File resDir, Iterable<String> whiteList, Iterable<TinyPngInfo> compressedList) {
-//        def newCompressedList = new ArrayList<TinyPngInfo>()
-//        def accountError = false
-//        def beforeTotalSize = 0
-//        def afterTotalSize = 0
-//        label: for (File file : resDir.listFiles()) {
-//            def filePath = file.path
-//            def fileName = file.name
-//
-//            for (String s : whiteList) {
-//                if (fileName ==~/$s/) {
-//                    println("match whit list, skip it >>>>>>>>>>>>> $filePath")
-//                    continue label
-//                }
-//            }
-//
-//            for (TinyPngInfo info : compressedList) {
-//                if (filePath == info.path && generateMD5(file) == info.md5) {
-//                    continue label
-//                }
-//            }
-//
-//            if (fileName.endsWith(".jpg") || fileName.endsWith(".png")) {
-//                if (fileName.contains(".9")) {
-//                    continue
-//                }
-//
-//                println("find target pic >>>>>>>>>>>>> $filePath")
-//
-//                def fis = new FileInputStream(file)
-//
-//                try {
-//                    def beforeSize = fis.available()
-//                    def beforeSizeStr = formatFileSize(beforeSize)
-//
-//                    // Use the Tinify API client
-//                    def tSource = Tinify.fromFile("${resDir}/${fileName}")
-//                    tSource.toFile("${resDir}/${fileName}")
-//
-//                    def afterSize = fis.available()
-//                    def afterSizeStr = formatFileSize(afterSize)
-//
-//                    beforeTotalSize += beforeSize
-//                    afterTotalSize += afterSize
-//                    newCompressedList.add(new TinyPngInfo(filePath, beforeSizeStr, afterSizeStr, generateMD5(file)))
-//
-//                    println("beforeSize: $beforeSizeStr -> afterSize: ${afterSizeStr}")
-//                } catch (AccountException e) {
-//                    println("AccountException: ${e.getMessage()}")
-//                    accountError = true
-//                    break
-//                    // Verify your API key and account limit.
-//                } catch (ClientException e) {
-//                    // Check your source image and request options.
-//                    println("ClientException: ${e.getMessage()}")
-//                } catch (ServerException e) {
-//                    // Temporary issue with the Tinify API.
-//                    println("ServerException: ${e.getMessage()}")
-//                } catch (ConnectionException e) {
-//                    // A network connection error occurred.
-//                    println("ConnectionException: ${e.getMessage()}")
-//                } catch (IOException e) {
-//                    // Something else went wrong, unrelated to the Tinify API.
-//                    println("IOException: ${e.getMessage()}")
-//                } catch (Exception e) {
-//                    println("Exception: ${e.toString()}")
-//                }
-//            }
-//        }
-//        return new TinyPngResult(beforeTotalSize, afterTotalSize, accountError, newCompressedList)
-//    }
 
     public static TinyPngInfo compress(File imgFile, Iterable<String> whiteList, Iterable<TinyPngInfo> compressedList) {
         //def newCompressedList = new ArrayList<TinyPngInfo>()
@@ -137,7 +68,6 @@ public class TinyPngTask extends DefaultTask {
         def accountError = false
         def beforeTotalSize = 0
         def afterTotalSize = 0
-       // label: for (File file : resDir.listFiles()) {
         def filePath = imgFile.path
         def fileName = imgFile.name
 
@@ -148,14 +78,13 @@ public class TinyPngTask extends DefaultTask {
             }
         }
 
+        def truncatedPath = filePath.replace(projectRootDirectory.parent, "")
         for (TinyPngInfo info : compressedList) {
-            if (filePath == info.path && generateMD5(imgFile) == info.md5) {
+            if (truncatedPath == info.path && generateMD5(imgFile) == info.md5) {
                 println("file already optimized >>>>>>>>>>>>> $filePath")
                 return null
             }
         }
-
-        //if (fileName.endsWith(".jpg") || fileName.endsWith(".png")) {
 
         println("find target pic >>>>>>>>>>>>> $filePath\n")
 
@@ -174,7 +103,10 @@ public class TinyPngTask extends DefaultTask {
 
             beforeTotalSize += beforeSize
             afterTotalSize += afterSize
-            tinyPngInfo = new TinyPngInfo(filePath, beforeSizeStr, afterSizeStr, generateMD5(imgFile))
+
+
+            //Remove absolute path from TinyPng file path info
+            tinyPngInfo = new TinyPngInfo(filePath.replace(projectRootDirectory.parent, ""), beforeSize, afterSize, generateMD5(imgFile))
 
             println("beforeSize: $beforeSizeStr -> afterSize: ${afterSizeStr}")
         } catch (AccountException e) {
@@ -197,19 +129,45 @@ public class TinyPngTask extends DefaultTask {
         } catch (Exception e) {
             println("Exception: ${e.toString()}")
         }
-        //}
-        //}
         return tinyPngInfo
+    }
+
+    public static TinyPngResult scanDirectoryForImageFiles(File directory, List<TinyPngInfo> compressedList, List<TinyPngInfo> newCompressedList, TinyPngExtension configuration) {
+        TinyPngResult result = new TinyPngResult()
+        directory.eachFileRecurse (FileType.ALL) { file ->
+            if(file.isDirectory()) {
+                configuration.excludeDirs.each { dirPattern ->
+                    if(!file.getName().contains($dirPattern)) {
+                        result.addResult(scanDirectoryForImageFiles(file, compressedList, newCompressedList, configuration));
+                    } else {
+                        print("skipping directory ${dirPattern} excluded")
+                    }
+                }
+            } else if(file.isFile()) {
+                configuration.resourcePattern.each { pattern ->
+                    if(file.getName().matches(~/$pattern/)) {
+                        def imgFile = file
+                        TinyPngInfo info = compress(imgFile, configuration.whiteList, compressedList)
+                        if (info != null) {
+                            result.AddInfo(info)
+                            //beforeSize += result.preSize
+                            //afterSize += result.postSize
+                            //error = result.error
+                            newCompressedList.add(info)
+                        } else {
+                            print("${imgFile} returning null\n")
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @TaskAction
     def run() {
         println(configuration.toString())
 
-//        if (!(configuration.resourceDir ?: false)) {
-//            println("Not found resources list")
-//            return
-//        }
         if (!(configuration.apiKey ?: false)) {
             println("Tiny API Key not set")
             return
@@ -244,9 +202,10 @@ public class TinyPngTask extends DefaultTask {
             }
         }
 
-        def beforeSize = 0L
-        def afterSize = 0L
-        def error = false
+//        def beforeSize = 0L
+//        def afterSize = 0L
+//        def error = false
+        TinyPngResult finalResult  = new TinyPngResult()
         def newCompressedList = new ArrayList<TinyPngInfo>()
         //configuration.resourceDir.each { d ->
         def rootDir = new File("${project.projectDir}")
@@ -255,29 +214,13 @@ public class TinyPngTask extends DefaultTask {
             if (!(configuration.resourcePattern ?: false)) {
                 configuration.resourcePattern = [".+\\.png", ".+\\.jpg", ".+\\.jpeg"]
             }
-            rootDir.eachFileRecurse (FileType.FILES) { file ->
-                configuration.resourcePattern.each { p ->
-                    if(file.getName().matches(~/$p/)) {
-                        def imgFile = file
-                        //if(!error) {
-                        TinyPngInfo result = compress(imgFile, configuration.whiteList, compressedList)
-                        if (result != null) {
-                            beforeSize += result.preSize
-                            afterSize += result.postSize
-                        //error = result.error
-                            newCompressedList.add(result)
-                        } else {
-                            print("${imgFile} returning null\n")
-                        }
-                        //}
-                    }
-                }
-            }
+            finalResult = scanDirectoryForImageFiles(rootDir, compressedList, newCompressedList, configuration);
         }
-        //}
+
 
         if(newCompressedList) {
             for (TinyPngInfo newTinyPng : newCompressedList) {
+//                def truncatedPath = .replace(projectRootDirectory.parent, "")
                 def index = compressedList.path.indexOf(newTinyPng.path)
                 if (index >= 0) {
                     compressedList[index] = newTinyPng
@@ -288,7 +231,7 @@ public class TinyPngTask extends DefaultTask {
             def jsonOutput = new JsonOutput()
             def json = jsonOutput.toJson(compressedList)
             compressedListFile.write(jsonOutput.prettyPrint(json), "utf-8")
-            println("Task finish, compress ${newCompressedList.size()} files, before total size: ${formatFileSize(beforeSize)} after total size: ${formatFileSize(afterSize)}")
+            println("Task finish, compress ${newCompressedList.size()} files, before total size: ${formatFileSize(finalResult.beforeSize)} after total size: ${formatFileSize(finalResult.afterSize)}")
         }
     }
 }

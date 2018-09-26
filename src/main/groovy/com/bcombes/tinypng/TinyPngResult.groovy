@@ -25,6 +25,22 @@ public class TinyPngResult {
         return error
     }
 
+    void addInfo(TinyPngInfo tinyInfo) {
+        if(tinyInfo != null) {
+            beforeSize += tinyInfo.preSize
+            afterSize += tinyInfo.postSize
+            results.add(tinyInfo);
+        }
+    }
+
+    void addResult(TinyPngResult tinyResult) {
+        if(tinyResult != null) {
+            this.beforeSize += tinyResult.beforeSize
+            this.afterSize += tinyResult.afterSize
+            results.addAll(tinyResult.getResults())
+        }
+    }
+
     ArrayList<TinyPngInfo> getResults() {
         return results
     }

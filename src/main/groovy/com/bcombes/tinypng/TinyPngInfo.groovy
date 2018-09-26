@@ -6,14 +6,14 @@ package com.bcombes.tinypng
  */
 class TinyPngInfo {
     String path
-    String preSize;
-    String postSize
+    long preSize;
+    long postSize
     String md5
 
     TinyPngInfo() {
     }
 
-    TinyPngInfo(String path, String preSize, String postSize, String md5) {
+    TinyPngInfo(String path, long preSize, long postSize, String md5) {
         this.path = path
         this.preSize = preSize
         this.postSize = postSize

@@ -7,10 +7,12 @@ package com.bcombes.tinypng
 public class TinyPngExtension {
     String apiKey
     ArrayList<String> whiteList;
+    ArrayList<String> excludeDirs;
     ArrayList<String> resourcePattern;
 
     public TinyPngExtension() {
         apiKey = ""
+        excludeDirs = []
         whiteList = []
         resourcePattern = []
     }

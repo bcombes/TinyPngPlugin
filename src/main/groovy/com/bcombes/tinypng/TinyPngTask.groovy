@@ -143,10 +143,10 @@ public class TinyPngTask extends DefaultTask {
                     }
                 }
                 if(exclude) {
+                    print("skipping directory ${file.path}\n")
+                } else {
                     print("scanning directory ${file.path} \n")
                     result.addResult(scanDirectoryForImageFiles(file, compressedList, newCompressedList, configuration, projParentDirPath));
-                } else {
-                    print("skipping directory ${file.path}\n")
                 }
             } else if(file.isFile()) {
                 configuration.resourcePattern.each { pattern ->

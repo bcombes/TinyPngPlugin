@@ -154,7 +154,7 @@ public class TinyPngTask extends DefaultTask {
                         def imgFile = file
                         TinyPngInfo info = compress(imgFile, configuration.whiteList, compressedList, projParentDirPath)
                         if (info != null) {
-                            result.AddInfo(info)
+                            result.addInfo(info)
                             //beforeSize += result.preSize
                             //afterSize += result.postSize
                             //error = result.error

@@ -60,7 +60,7 @@ public class TinyPngTask extends DefaultTask {
     }
 
 
-    public static TinyPngInfo compress(File imgFile, Iterable<String> whiteList, Iterable<TinyPngInfo> compressedList, String projectRootDirectory) {
+    public static TinyPngInfo compress(File imgFile, Iterable<String> whiteList, Iterable<TinyPngInfo> compressedList, String projParentDirPath) {
         //def newCompressedList = new ArrayList<TinyPngInfo>()
         def tinyPngInfo
         def accountError = false
@@ -76,9 +76,9 @@ public class TinyPngTask extends DefaultTask {
             }
         }
 
-        def truncatedPath = filePath.replace(projectRootDirectory, "")
+        def relativePath = filePath.replace(projParentDirPath, "")
         for (TinyPngInfo info : compressedList) {
-            if (truncatedPath == info.path && generateMD5(imgFile) == info.md5) {
+            if (relativePath == info.path && generateMD5(imgFile) == info.md5) {
                 println("file already optimized >>>>>>>>>>>>> $filePath")
                 return null
             }
@@ -104,7 +104,7 @@ public class TinyPngTask extends DefaultTask {
 
 
             //Remove absolute path from TinyPng file path info
-            tinyPngInfo = new TinyPngInfo(truncatedPath, beforeSize, afterSize, generateMD5(imgFile))
+            tinyPngInfo = new TinyPngInfo(relativePath, beforeSize, afterSize, generateMD5(imgFile))
 
             println("beforeSize: $beforeSizeStr -> afterSize: ${afterSizeStr}")
         } catch (AccountException e) {
@@ -131,13 +131,13 @@ public class TinyPngTask extends DefaultTask {
     }
 
     public static TinyPngResult scanDirectoryForImageFiles(File directory, List<TinyPngInfo> compressedList, List<TinyPngInfo> newCompressedList, TinyPngExtension configuration,
-                                                           String parentRootDirectory) {
+                                                           String projParentDirPath) {
         TinyPngResult result = new TinyPngResult()
         directory.eachFileRecurse (FileType.ALL) { file ->
             if(file.isDirectory()) {
                 configuration.excludeDirs.each { dirPattern ->
                     if(!file.getName().endsWith($dirPattern)) {
-                        result.addResult(scanDirectoryForImageFiles(file, compressedList, newCompressedList, configuration, parentRootDirectory));
+                        result.addResult(scanDirectoryForImageFiles(file, compressedList, newCompressedList, configuration, projParentDirPath));
                     } else {
                         print("skipping directory ${dirPattern} excluded")
                     }
@@ -146,7 +146,7 @@ public class TinyPngTask extends DefaultTask {
                 configuration.resourcePattern.each { pattern ->
                     if(file.getName().matches(~/$pattern/)) {
                         def imgFile = file
-                        TinyPngInfo info = compress(imgFile, configuration.whiteList, compressedList, parentRootDirectory)
+                        TinyPngInfo info = compress(imgFile, configuration.whiteList, compressedList, projParentDirPath)
                         if (info != null) {
                             result.AddInfo(info)
                             //beforeSize += result.preSize
@@ -208,13 +208,13 @@ public class TinyPngTask extends DefaultTask {
         def newCompressedList = new ArrayList<TinyPngInfo>()
         //configuration.resourceDir.each { d ->
         def rootDir = new File("${project.projectDir}")
-        def projectRootDirectory = rootDir.getParentFile().getPath();
+        def projParentDirPath = rootDir.getParentFile().getPath();
         println("project root set to ... ${rootDir}")
         if(rootDir.exists() && rootDir.isDirectory()) {
             if (!(configuration.resourcePattern ?: false)) {
                 configuration.resourcePattern = [".+\\.png", ".+\\.jpg", ".+\\.jpeg"]
             }
-            finalResult = scanDirectoryForImageFiles(rootDir, compressedList, newCompressedList, configuration, parentRootDirectory);
+            finalResult = scanDirectoryForImageFiles(rootDir, compressedList, newCompressedList, configuration, projParentDirPath);
         }
 
 

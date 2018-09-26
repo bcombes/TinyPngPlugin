@@ -6,6 +6,10 @@ public class TinyPngResult {
     private boolean error
     private ArrayList<TinyPngInfo> results
 
+    TinyPngResult() {
+        this.results = new ArrayList<TinyPngInfo>();
+    }
+
     TinyPngResult(long beforeSize, long afterSize, boolean error, ArrayList<TinyPngInfo> results) {
         this.beforeSize = beforeSize
         this.afterSize = afterSize

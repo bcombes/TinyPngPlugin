@@ -137,7 +137,7 @@ public class TinyPngTask extends DefaultTask {
         directory.eachFileRecurse (FileType.ALL) { file ->
             if(file.isDirectory()) {
                 configuration.excludeDirs.each { dirPattern ->
-                    if(!file.getName().contains($dirPattern)) {
+                    if(!file.getName().endsWith($dirPattern)) {
                         result.addResult(scanDirectoryForImageFiles(file, compressedList, newCompressedList, configuration));
                     } else {
                         print("skipping directory ${dirPattern} excluded")

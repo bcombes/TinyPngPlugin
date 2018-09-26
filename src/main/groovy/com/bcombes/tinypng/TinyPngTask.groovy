@@ -204,7 +204,7 @@ public class TinyPngTask extends DefaultTask {
 //        def beforeSize = 0L
 //        def afterSize = 0L
 //        def error = false
-        TinyPngResult finalResult  = new TinyPngResult()
+        TinyPngResult finalResult  = null
         def newCompressedList = new ArrayList<TinyPngInfo>()
         //configuration.resourceDir.each { d ->
         def rootDir = new File("${project.projectDir}")

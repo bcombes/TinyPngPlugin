@@ -19,7 +19,7 @@ public class TinyPngTask extends DefaultTask {
 
     //def android
     def TinyPngExtension configuration
-    def static File projectRootDirectory = new File(${project.projectDir})
+    def static File projectRootDirectory
 
     TinyPngTask() {
         description = 'Tiny Resources'
@@ -27,7 +27,7 @@ public class TinyPngTask extends DefaultTask {
         outputs.upToDateWhen { false }
         //android = project.extensions.android
         configuration = project.tinyInfo
-        //projectRootDirectory = ;
+        projectRootDirectory = new File(${project.projectDir})
     }
 
     public static String formatFileSize(long fileS) {

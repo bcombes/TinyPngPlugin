@@ -21,6 +21,7 @@ public class TinyPngExtension {
     public String toString() {
         return "TinyPngExtension{" +
                 "apiKey='" + apiKey + '\'' +
+                "excludeDirs" + excludeDirs +
                 ", whiteList=" + whiteList +
                 ", resourcePattern=" + resourcePattern +
                 '}';

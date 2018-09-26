@@ -7,7 +7,7 @@ public class TinyPngResult {
     private ArrayList<TinyPngInfo> results
 
     TinyPngResult() {
-        this.results = new ArrayList<TinyPngInfo>();
+        this.results = new ArrayList<TinyPngInfo>()
     }
 
     TinyPngResult(long beforeSize, long afterSize, boolean error, ArrayList<TinyPngInfo> results) {

@@ -133,7 +133,7 @@ public class TinyPngTask extends DefaultTask {
     public static TinyPngResult scanDirectoryForImageFiles(File directory, List<TinyPngInfo> compressedList, List<TinyPngInfo> newCompressedList, TinyPngExtension configuration,
                                                            String projParentDirPath) {
         TinyPngResult result = new TinyPngResult()
-        directory.eachFileRecurse (FileType.ALL) { file ->
+        directory.eachFileRecurse (FileType.ANY) { file ->
             if(file.isDirectory()) {
                 configuration.excludeDirs.each { dirPattern ->
                     if(!file.getName().endsWith($dirPattern)) {

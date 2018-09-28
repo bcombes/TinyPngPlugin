@@ -162,9 +162,9 @@ public class TinyPngTask extends DefaultTask {
                             //afterSize += result.postSize
                             //error = result.error
                             newCompressedList.add(info)
-                        } else {
-                            logger.debug("${imgFile} returning null\n")
-                        }
+                        } /*else {
+                            logger.("${imgFile} returning null\n")
+                        } */
                     }
                 }
             }
